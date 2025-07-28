@@ -66,7 +66,7 @@ docs:
 
 # System installation targets (require sudo)
 system-install:
-	@echo "Installing RevertIT system-wide..."
+	@echo "Installing revertit system-wide..."
 	@if [ "$$(id -u)" != "0" ]; then \
 		echo "Error: This target must be run with sudo"; \
 		exit 1; \
@@ -74,7 +74,7 @@ system-install:
 	./scripts/install.sh
 
 system-uninstall:
-	@echo "Uninstalling RevertIT system-wide..."
+	@echo "Uninstalling revertit system-wide..."
 	@if [ "$$(id -u)" != "0" ]; then \
 		echo "Error: This target must be run with sudo"; \
 		exit 1; \

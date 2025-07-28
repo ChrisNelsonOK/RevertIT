@@ -57,13 +57,13 @@ sudo ./scripts/uninstall.sh
 ## Architecture Overview
 
 ### Core Components
-1. **MeshAdminDaemon** - Main service monitoring system changes
+1. **RevertIT Daemon** (`revertit-daemon`) - Main service monitoring system changes
 2. **ConfigurationMonitor** - Watches critical system files using filesystem events
 3. **SnapshotManager** - Manages system snapshots (TimeShift + manual snapshots)
 4. **TimeoutManager** - Handles timed confirmations and automatic reverts
 5. **RevertEngine** - Performs automatic reversion of configuration changes
 6. **DistroDetector** - Detects Linux distribution and provides compatibility
-7. **CLI Interface** - Command-line management tools
+7. **CLI Interface** (`revertit`) - Command-line management tools
 
 ### Key Files and Directories
 - `src/revertit/` - Main Python package

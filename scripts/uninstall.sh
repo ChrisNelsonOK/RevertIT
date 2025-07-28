@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 CONFIG_DIR="/etc/revertit"
 LOG_DIR="/var/log"
 DATA_DIR="/var/lib/revertit"
-SYSTEMD_DIR="/etc/systemd/system"
+SYSTEMD_DIR="/lib/systemd/system"
 
 # Print colored output
 print_status() {
@@ -126,6 +126,8 @@ remove_files() {
     if [[ -f /etc/logrotate.d/revertit ]]; then
         rm -f /etc/logrotate.d/revertit
         print_success "Log rotation configuration removed"
+    else
+        print_status "Log rotation configuration not found"
     fi
 }
 

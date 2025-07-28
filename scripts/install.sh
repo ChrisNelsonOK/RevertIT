@@ -19,7 +19,7 @@ INSTALL_PREFIX="/usr/local"
 CONFIG_DIR="/etc/revertit"
 LOG_DIR="/var/log"
 DATA_DIR="/var/lib/revertit"
-SYSTEMD_DIR="/etc/systemd/system"
+SYSTEMD_DIR="/lib/systemd/system"
 
 # Check if running as root
 check_root() {
@@ -272,6 +272,9 @@ install_systemd_service() {
 setup_log_rotation() {
     print_status "Setting up log rotation..."
     
+    # Ensure logrotate directory exists
+    mkdir -p /etc/logrotate.d
+    
     cat > /etc/logrotate.d/revertit << EOF
 /var/log/revertit.log {
     daily
@@ -342,6 +345,7 @@ print_post_install() {
     echo "  Configuration: $CONFIG_DIR/config.yaml"
     echo "  Log file: /var/log/revertit.log"
     echo "  Data directory: $DATA_DIR"
+    echo "  Log rotation: /etc/logrotate.d/revertit"
     echo "  TimeShift: Enhanced snapshot capabilities included"
     echo
 }
