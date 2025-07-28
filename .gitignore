@@ -144,9 +144,9 @@ dmypy.json
 ehthumbs.db
 Thumbs.db
 
-# MeshAdminRevertIt specific
+# RevertIT specific
 *.pid
 *.sock
 /var/
-/etc/meshadmin-revertit/config.yaml.local
-/tmp/meshadmin-*
+/etc/revertit/config.yaml.local
+/tmp/revertit-*

@@ -1,5 +1,5 @@
 """Daemon module for RevertIT."""
 
-from .main import MeshAdminDaemon
+from .main import RevertITDaemon
 
-__all__ = ["MeshAdminDaemon"]
+__all__ = ["RevertITDaemon"]

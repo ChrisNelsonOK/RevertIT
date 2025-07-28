@@ -1,5 +1,5 @@
 """CLI module for RevertIT."""
 
-from .main import MeshAdminCLI
+from .main import RevertITCLI
 
-__all__ = ["MeshAdminCLI"]
+__all__ = ["RevertITCLI"]

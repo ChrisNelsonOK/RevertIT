@@ -20,7 +20,7 @@ from ..revert.engine import RevertEngine
 from ..distro.detector import DistroDetector
 
 
-class MeshAdminDaemon:
+class RevertITDaemon:
     """Main daemon class for RevertIT."""
     
     def __init__(self, config_path: str = "/etc/revertit/config.yaml"):
@@ -44,7 +44,7 @@ class MeshAdminDaemon:
     def load_config(self) -> None:
         """Load configuration from YAML file."""
         try:
-            with open(self.config_path, 'r') as f:
+            with open(self.config_path) as f:
                 self.config = yaml.safe_load(f)
         except FileNotFoundError:
             # Use default configuration if file not found
@@ -306,7 +306,7 @@ def main():
     
     args = parser.parse_args()
     
-    daemon = MeshAdminDaemon(config_path=args.config)
+    daemon = RevertITDaemon(config_path=args.config)
     
     if not args.foreground:
         # Daemonize process

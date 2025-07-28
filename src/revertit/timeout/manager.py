@@ -303,7 +303,7 @@ class TimeoutManager:
         try:
             socket.inet_aton(address)
             return True
-        except socket.error:
+        except OSError:
             return False
     
     def _perform_revert(self, entry: TimeoutEntry) -> None:

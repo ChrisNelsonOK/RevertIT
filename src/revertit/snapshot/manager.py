@@ -282,7 +282,7 @@ class SnapshotManager:
                 
                 if metadata_file and metadata_file.exists():
                     try:
-                        with open(metadata_file, 'r') as f:
+                        with open(metadata_file) as f:
                             metadata = json.load(f)
                             snapshot_info.update(metadata)
                     except Exception as e:
@@ -403,7 +403,7 @@ class SnapshotManager:
             return False
         
         try:
-            with open(metadata_file, 'r') as f:
+            with open(metadata_file) as f:
                 metadata = json.load(f)
         except Exception as e:
             self.logger.error(f"Failed to load snapshot metadata: {e}")

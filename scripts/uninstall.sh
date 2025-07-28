@@ -134,14 +134,14 @@ cleanup_processes() {
     print_status "Cleaning up any remaining processes..."
     
     # Check for running daemon
-    if pgrep -f meshadmin-daemon &>/dev/null; then
+    if pgrep -f revertit-daemon &> /dev/null; then
         print_warning "Found running daemon processes"
-        pkill -f meshadmin-daemon || true
+        pkill -f revertit-daemon || true
         sleep 2
         
         # Force kill if still running
-        if pgrep -f meshadmin-daemon &>/dev/null; then
-            pkill -9 -f meshadmin-daemon || true
+        if pgrep -f revertit-daemon &> /dev/null; then
+            pkill -9 -f revertit-daemon || true
             print_success "Forced termination of daemon processes"
         else
             print_success "Daemon processes terminated"
@@ -166,9 +166,8 @@ verify_uninstall() {
         print_warning "revertit command still available"
         return 1
     fi
-    
-    if command -v meshadmin-daemon &>/dev/null; then
-        print_warning "meshadmin-daemon command still available"
+    if command -v revertit-daemon &> /dev/null; then
+        print_warning "revertit-daemon command still available"
         return 1
     fi
     

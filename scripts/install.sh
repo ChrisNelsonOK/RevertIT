@@ -302,10 +302,10 @@ verify_installation() {
         return 1
     fi
     
-    if command -v meshadmin-daemon &> /dev/null; then
-        print_success "meshadmin-daemon command available"
+    if command -v revertit-daemon &> /dev/null; then
+        print_success "revertit-daemon command available"
     else
-        print_error "meshadmin-daemon command not found"
+        print_error "revertit-daemon command not found"
         return 1
     fi
     

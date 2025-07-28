@@ -113,7 +113,7 @@ class DistroDetector:
         for file_path in os_release_files:
             if os.path.exists(file_path):
                 try:
-                    with open(file_path, 'r') as f:
+                    with open(file_path) as f:
                         lines = f.readlines()
                     
                     info = {}
@@ -177,7 +177,7 @@ class DistroDetector:
     def _detect_from_issue(self) -> Optional[Dict[str, str]]:
         """Detect distribution from /etc/issue."""
         try:
-            with open('/etc/issue', 'r') as f:
+            with open('/etc/issue') as f:
                 issue_content = f.read().strip()
             
             # Parse common issue formats
@@ -242,7 +242,7 @@ class DistroDetector:
                 try:
                     # Try to extract version information
                     version = 'unknown'
-                    with open(file_path, 'r') as f:
+                    with open(file_path) as f:
                         content = f.read().strip()
                         # Simple version extraction
                         import re

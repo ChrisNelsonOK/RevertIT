@@ -10,13 +10,13 @@ import yaml
 from pathlib import Path
 from typing import Dict, Any, List
 
-from ..daemon.main import MeshAdminDaemon
+from ..daemon.main import RevertITDaemon
 from ..snapshot.manager import SnapshotManager
 from ..timeout.manager import TimeoutManager
 from ..distro.detector import DistroDetector
 
 
-class MeshAdminCLI:
+class RevertITCLI:
     """Command-line interface for RevertIT."""
     
     def __init__(self):
@@ -36,7 +36,7 @@ class MeshAdminCLI:
     def load_config(self) -> Dict[str, Any]:
         """Load configuration file."""
         try:
-            with open(self.config_path, 'r') as f:
+            with open(self.config_path) as f:
                 return yaml.safe_load(f)
         except FileNotFoundError:
             print(f"Configuration file not found: {self.config_path}")
@@ -56,7 +56,7 @@ class MeshAdminCLI:
         pid_file = config.get('global', {}).get('pid_file', '/var/run/revertit.pid')
         if Path(pid_file).exists():
             try:
-                with open(pid_file, 'r') as f:
+                with open(pid_file) as f:
                     pid = int(f.read().strip())
                 
                 # Check if process is running
@@ -103,7 +103,7 @@ class MeshAdminCLI:
             self.config_path = args.config
         
         try:
-            daemon = MeshAdminDaemon(config_path=self.config_path)
+            daemon = RevertITDaemon(config_path=self.config_path)
             print("Starting RevertIT daemon...")
             daemon.start()
             return 0
@@ -121,7 +121,7 @@ class MeshAdminCLI:
             return 0
         
         try:
-            with open(pid_file, 'r') as f:
+            with open(pid_file) as f:
                 pid = int(f.read().strip())
             
             import os
@@ -399,7 +399,7 @@ def main():
         parser.print_help()
         return 1
     
-    cli = MeshAdminCLI()
+    cli = RevertITCLI()
     cli.config_path = args.config
     cli.setup_logging(args.verbose)
     

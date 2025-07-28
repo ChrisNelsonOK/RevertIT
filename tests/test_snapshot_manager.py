@@ -230,7 +230,7 @@ class TestSnapshotManager(unittest.TestCase):
         self.snapshot_manager._restore_file(file_info, snapshot_dir)
         
         # Check that file was restored
-        with open(original_file, 'r') as f:
+        with open(original_file) as f:
             content = f.read()
         
         self.assertEqual(content, 'backed up content')

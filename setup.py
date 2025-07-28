@@ -53,7 +53,7 @@ setup(
     entry_points={
         "console_scripts": [
             "revertit=revertit.cli.main:main",
-            "meshadmin-daemon=revertit.daemon.main:main",
+            "revertit-daemon=revertit.daemon.main:main",
         ],
     },
     include_package_data=True,

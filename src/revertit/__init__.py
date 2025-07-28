@@ -11,16 +11,25 @@ __version__ = "1.0.0"
 __author__ = "MeshAdmin"
 __email__ = "admin@meshadmin.com"
 
-from .daemon.main import MeshAdminDaemon
+from .daemon.main import RevertITDaemon
+from .cli.main import RevertITCLI
 from .snapshot.manager import SnapshotManager
 from .monitor.watcher import ConfigurationMonitor
 from .timeout.manager import TimeoutManager
 from .revert.engine import RevertEngine
 
+# Backward compatibility aliases (deprecated, will be removed in v1.1)
+MeshAdminDaemon = RevertITDaemon  # deprecated
+MeshAdminCLI = RevertITCLI  # deprecated
+
 __all__ = [
-    "MeshAdminDaemon",
+    "RevertITDaemon",
+    "RevertITCLI",
     "SnapshotManager", 
     "ConfigurationMonitor",
     "TimeoutManager",
-    "RevertEngine"
+    "RevertEngine",
+    # Deprecated aliases for backward compatibility
+    "MeshAdminDaemon",
+    "MeshAdminCLI"
 ]

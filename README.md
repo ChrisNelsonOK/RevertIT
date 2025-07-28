@@ -20,7 +20,7 @@ RevertIT monitors critical system configuration files and enforces timed confirm
 
 ### Core Components
 
-1. **MeshAdminDaemon** (`meshadmin-daemon`) - Main service that monitors system changes
+1. **RevertIT Daemon** (`revertit-daemon`) - Main service that monitors system changes
 2. **ConfigurationMonitor** - Watches critical system files using filesystem events
 3. **SnapshotManager** - Manages system snapshots (TimeShift integration + manual snapshots)
 4. **TimeoutManager** - Handles timed confirmations and automatic reverts
@@ -51,7 +51,7 @@ RevertIT monitors critical system configuration files and enforces timed confirm
 
 ```bash
 # Clone the repository
-git clone https://github.com/meshadmin/revertit.git
+git clone https://github.com/your-org/revertit.git
 cd revertit
 
 # Run installation script
@@ -280,7 +280,7 @@ sudo chmod 644 /etc/revertit/config.yaml
 ### Debug Mode
 ```bash
 # Run in foreground with debug logging
-sudo meshadmin-daemon --config /etc/revertit/config.yaml --foreground
+sudo revertit-daemon --config /etc/revertit/config.yaml --foreground
 ```
 
 ## Development
@@ -292,7 +292,7 @@ sudo meshadmin-daemon --config /etc/revertit/config.yaml --foreground
 ### Development Setup
 ```bash
 # Clone repository
-git clone https://github.com/meshadmin/revertit.git
+git clone https://github.com/your-org/revertit.git
 cd revertit
 
 # Install in development mode
