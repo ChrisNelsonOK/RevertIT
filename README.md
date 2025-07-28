@@ -2,8 +2,6 @@
 
 > 🛡️ A timed confirmation system for (Li)nux configuration changes with automatic revert capabilities. Designed for remote system administrators to prevent loss of access due to configuration errors.
 
----
-
 ## 📋 Overview
 
 Revert-IT monitors critical system configuration files and enforces timed confirmations for any changes. If changes are not confirmed within the specified timeout period, or if connectivity is lost, the system automatically reverts to the previous configuration using snapshots.
@@ -398,7 +396,7 @@ sudo chmod 644 /etc/revertit/config.yaml
 
 ```bash
 # 🔍 Run in foreground with debug logging
-sudo meshadmin-daemon --config /etc/revertit/config.yaml --foreground
+sudo revertit-daemon --config /etc/revertit/config.yaml --foreground
 ```
 
 ---
