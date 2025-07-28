@@ -1,10 +1,10 @@
-# MeshAdminRevertIt
+# RevertIT
 
 A timed confirmation system for Linux configuration changes with automatic revert capabilities. Designed for remote system administrators to prevent loss of access due to configuration errors.
 
 ## Overview
 
-MeshAdminRevertIt monitors critical system configuration files and enforces timed confirmations for any changes. If changes are not confirmed within the specified timeout period, or if connectivity is lost, the system automatically reverts to the previous configuration using snapshots.
+RevertIT monitors critical system configuration files and enforces timed confirmations for any changes. If changes are not confirmed within the specified timeout period, or if connectivity is lost, the system automatically reverts to the previous configuration using snapshots.
 
 ### Key Features
 
@@ -26,7 +26,7 @@ MeshAdminRevertIt monitors critical system configuration files and enforces time
 4. **TimeoutManager** - Handles timed confirmations and automatic reverts
 5. **RevertEngine** - Performs automatic reversion of configuration changes
 6. **DistroDetector** - Detects Linux distribution and provides compatibility information
-7. **CLI Interface** (`meshadmin-revertit`) - Command-line tools for management
+7. **CLI Interface** (`revertit`) - Command-line tools for management
 
 ### How It Works
 
@@ -51,8 +51,8 @@ MeshAdminRevertIt monitors critical system configuration files and enforces time
 
 ```bash
 # Clone the repository
-git clone https://github.com/meshadmin/meshadmin-revertit.git
-cd meshadmin-revertit
+git clone https://github.com/meshadmin/revertit.git
+cd revertit
 
 # Run installation script
 sudo ./scripts/install.sh
@@ -68,19 +68,19 @@ sudo apt update && sudo apt install python3-pip python3-dev build-essential rsyn
 sudo pip3 install -e .
 
 # Create directories
-sudo mkdir -p /etc/meshadmin-revertit /var/lib/meshadmin-revertit
+sudo mkdir -p /etc/revertit /var/lib/revertit
 
 # Copy configuration
-sudo cp config/meshadmin-revertit.yaml /etc/meshadmin-revertit/config.yaml
+sudo cp config/revertit.yaml /etc/revertit/config.yaml
 
 # Install systemd service
-sudo cp systemd/meshadmin-revertit.service /etc/systemd/system/
+sudo cp systemd/revertit.service /etc/systemd/system/
 sudo systemctl daemon-reload
 ```
 
 ## Configuration
 
-The main configuration file is located at `/etc/meshadmin-revertit/config.yaml`.
+The main configuration file is located at `/etc/revertit/config.yaml`.
 
 ### Key Configuration Options
 
@@ -90,12 +90,12 @@ global:
   default_timeout: 300        # Default timeout (5 minutes)
   max_timeout: 1800          # Maximum timeout (30 minutes)
   log_level: INFO
-  log_file: /var/log/meshadmin-revertit.log
+  log_file: /var/log/revertit.log
 
 # Snapshot settings
 snapshot:
   enable_timeshift: true
-  snapshot_location: /var/lib/meshadmin-revertit/snapshots
+  snapshot_location: /var/lib/revertit/snapshots
   max_snapshots: 10
 
 # Monitoring paths
@@ -129,32 +129,32 @@ timeout:
 
 ```bash
 # Enable and start the service
-sudo systemctl enable meshadmin-revertit
-sudo systemctl start meshadmin-revertit
+sudo systemctl enable revertit
+sudo systemctl start revertit
 
 # Check status
-sudo systemctl status meshadmin-revertit
+sudo systemctl status revertit
 ```
 
 ### Command Line Interface
 
 ```bash
 # Show system status
-meshadmin-revertit status
+revertit status
 
 # List active timeouts
-meshadmin-revertit timeouts
+revertit timeouts
 
 # Confirm a configuration change
-meshadmin-revertit confirm <change-id>
+revertit confirm <change-id>
 
 # Manage snapshots
-meshadmin-revertit snapshots list
-meshadmin-revertit snapshots create --description "Manual snapshot"
-meshadmin-revertit snapshots restore <snapshot-id>
+revertit snapshots list
+revertit snapshots create --description "Manual snapshot"
+revertit snapshots restore <snapshot-id>
 
 # Test system compatibility
-meshadmin-revertit test
+revertit test
 ```
 
 ### Example Workflow
@@ -163,7 +163,7 @@ meshadmin-revertit test
 2. **System detects change** and creates a snapshot
 3. **Timeout starts** (default 5 minutes for SSH changes)
 4. **System shows warning** about pending timeout
-5. **Confirm the change**: `meshadmin-revertit confirm ssh_1234567890`
+5. **Confirm the change**: `revertit confirm ssh_1234567890`
 6. **Or let it auto-revert** if you lose connectivity or forget to confirm
 
 ### Change Categories and Timeouts
@@ -214,7 +214,7 @@ When snapshots are unavailable, the system can restore sensible default configur
 ## Logging and Monitoring
 
 ### Log Files
-- Main log: `/var/log/meshadmin-revertit.log`
+- Main log: `/var/log/revertit.log`
 - Automatic log rotation configured
 - Structured logging with timestamps and severity levels
 
@@ -254,11 +254,11 @@ When snapshots are unavailable, the system can restore sensible default configur
 **Service won't start**
 ```bash
 # Check service status and logs
-sudo systemctl status meshadmin-revertit
-sudo journalctl -u meshadmin-revertit -f
+sudo systemctl status revertit
+sudo journalctl -u revertit -f
 
 # Test configuration
-meshadmin-revertit test
+revertit test
 ```
 
 **TimeShift not working**
@@ -273,14 +273,14 @@ sudo timeshift --list
 **Permissions errors**
 ```bash
 # Ensure proper permissions
-sudo chown -R root:root /etc/meshadmin-revertit
-sudo chmod 644 /etc/meshadmin-revertit/config.yaml
+sudo chown -R root:root /etc/revertit
+sudo chmod 644 /etc/revertit/config.yaml
 ```
 
 ### Debug Mode
 ```bash
 # Run in foreground with debug logging
-sudo meshadmin-daemon --config /etc/meshadmin-revertit/config.yaml --foreground
+sudo meshadmin-daemon --config /etc/revertit/config.yaml --foreground
 ```
 
 ## Development
@@ -292,8 +292,8 @@ sudo meshadmin-daemon --config /etc/meshadmin-revertit/config.yaml --foreground
 ### Development Setup
 ```bash
 # Clone repository
-git clone https://github.com/meshadmin/meshadmin-revertit.git
-cd meshadmin-revertit
+git clone https://github.com/meshadmin/revertit.git
+cd revertit
 
 # Install in development mode
 pip3 install -e .
@@ -309,8 +309,8 @@ mypy src/
 
 ### Project Structure
 ```
-MeshAdminRevertIt/
-├── src/meshadmin_revertit/     # Main package code
+RevertIT/
+├── src/revertit/     # Main package code
 │   ├── daemon/                 # Daemon implementation
 │   ├── snapshot/               # Snapshot management
 │   ├── monitor/                # Configuration monitoring

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-MeshAdminRevertIt is a timed confirmation system for Linux configuration changes with automatic revert capabilities. It's designed for remote system administrators to prevent loss of access due to configuration errors.
+RevertIT is a timed confirmation system for Linux configuration changes with automatic revert capabilities. It's designed for remote system administrators to prevent loss of access due to configuration errors.
 
 ## Development Commands
 
@@ -23,26 +23,26 @@ sudo apt install timeshift
 ### Running and Testing
 ```bash
 # Test system compatibility
-meshadmin-revertit test
+revertit test
 
 # Run daemon in foreground (development)
-sudo python3 -m meshadmin_revertit.daemon.main --config config/meshadmin-revertit.yaml --foreground
+sudo python3 -m revertit.daemon.main --config config/revertit.yaml --foreground
 
 # Run CLI commands
-meshadmin-revertit status
-meshadmin-revertit snapshots list
+revertit status
+revertit snapshots list
 ```
 
 ### Service Management
 ```bash
 # Install systemd service
-sudo cp systemd/meshadmin-revertit.service /etc/systemd/system/
+sudo cp systemd/revertit.service /etc/systemd/system/
 sudo systemctl daemon-reload
 
 # Start/stop service
-sudo systemctl start meshadmin-revertit
-sudo systemctl stop meshadmin-revertit
-sudo systemctl status meshadmin-revertit
+sudo systemctl start revertit
+sudo systemctl stop revertit
+sudo systemctl status revertit
 ```
 
 ### Installation Scripts
@@ -66,13 +66,13 @@ sudo ./scripts/uninstall.sh
 7. **CLI Interface** - Command-line management tools
 
 ### Key Files and Directories
-- `src/meshadmin_revertit/` - Main Python package
-- `config/meshadmin-revertit.yaml` - Default configuration file
-- `systemd/meshadmin-revertit.service` - systemd service definition
+- `src/revertit/` - Main Python package
+- `config/revertit.yaml` - Default configuration file
+- `systemd/revertit.service` - systemd service definition
 - `scripts/install.sh` - Installation script
-- `/etc/meshadmin-revertit/` - Runtime configuration directory
-- `/var/lib/meshadmin-revertit/` - Runtime data and snapshots
-- `/var/log/meshadmin-revertit.log` - Main log file
+- `/etc/revertit/` - Runtime configuration directory
+- `/var/lib/revertit/` - Runtime data and snapshots
+- `/var/log/revertit.log` - Main log file
 
 ### Workflow
 1. Daemon monitors critical configuration files
@@ -89,7 +89,7 @@ sudo ./scripts/uninstall.sh
 
 ## Configuration
 
-Main config: `config/meshadmin-revertit.yaml` or `/etc/meshadmin-revertit/config.yaml`
+Main config: `config/revertit.yaml` or `/etc/revertit/config.yaml`
 
 Key sections:
 - `global`: Basic daemon settings, timeouts, logging
@@ -103,7 +103,7 @@ Key sections:
 The system requires root privileges for full functionality (monitoring system files, creating snapshots, restarting services).
 
 For development:
-1. Use `meshadmin-revertit test` to verify system compatibility
+1. Use `revertit test` to verify system compatibility
 2. Run daemon in foreground mode for debugging
 3. Test with non-critical configuration files first
 4. Always have out-of-band access when testing network changes

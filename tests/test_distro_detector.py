@@ -8,7 +8,7 @@ from unittest.mock import patch, mock_open, MagicMock
 import tempfile
 import os
 
-from meshadmin_revertit.distro.detector import DistroDetector
+from revertit.distro.detector import DistroDetector
 
 
 class TestDistroDetector(unittest.TestCase):

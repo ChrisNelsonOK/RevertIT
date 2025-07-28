@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-MeshAdminRevertIt Daemon - Main daemon process for monitoring configuration changes.
+RevertIT Daemon - Main daemon process for monitoring configuration changes.
 """
 
 import os
@@ -21,9 +21,9 @@ from ..distro.detector import DistroDetector
 
 
 class MeshAdminDaemon:
-    """Main daemon class for MeshAdminRevertIt."""
+    """Main daemon class for RevertIT."""
     
-    def __init__(self, config_path: str = "/etc/meshadmin-revertit/config.yaml"):
+    def __init__(self, config_path: str = "/etc/revertit/config.yaml"):
         """Initialize the daemon with configuration."""
         self.config_path = config_path
         self.config: Dict[str, Any] = {}
@@ -61,12 +61,12 @@ class MeshAdminDaemon:
                 'max_timeout': 1800,
                 'min_timeout': 60,
                 'log_level': 'INFO',
-                'log_file': '/var/log/meshadmin-revertit.log',
-                'pid_file': '/var/run/meshadmin-revertit.pid'
+                'log_file': '/var/log/revertit.log',
+                'pid_file': '/var/run/revertit.pid'
             },
             'snapshot': {
                 'enable_timeshift': True,
-                'snapshot_location': '/var/lib/meshadmin-revertit/snapshots',
+                'snapshot_location': '/var/lib/revertit/snapshots',
                 'max_snapshots': 10,
                 'compress_snapshots': True
             },
@@ -139,7 +139,7 @@ class MeshAdminDaemon:
         )
         
         self.logger = logging.getLogger(__name__)
-        self.logger.info("MeshAdminRevertIt daemon starting")
+        self.logger.info("RevertIT daemon starting")
     
     def write_pid_file(self) -> None:
         """Write process ID to PID file."""
@@ -246,7 +246,7 @@ class MeshAdminDaemon:
             self.start_monitoring_threads()
             
             self.running = True
-            self.logger.info("MeshAdminRevertIt daemon started successfully")
+            self.logger.info("RevertIT daemon started successfully")
             
             # Main daemon loop
             while self.running:
@@ -265,7 +265,7 @@ class MeshAdminDaemon:
         self.running = False
         
         if self.logger:
-            self.logger.info("Stopping MeshAdminRevertIt daemon")
+            self.logger.info("Stopping RevertIT daemon")
         
         # Stop components
         if self.config_monitor:
@@ -285,17 +285,17 @@ class MeshAdminDaemon:
         self.remove_pid_file()
         
         if self.logger:
-            self.logger.info("MeshAdminRevertIt daemon stopped")
+            self.logger.info("RevertIT daemon stopped")
 
 
 def main():
     """Main entry point for the daemon."""
     import argparse
     
-    parser = argparse.ArgumentParser(description="MeshAdminRevertIt Daemon")
+    parser = argparse.ArgumentParser(description="RevertIT Daemon")
     parser.add_argument(
         "--config", 
-        default="/etc/meshadmin-revertit/config.yaml",
+        default="/etc/revertit/config.yaml",
         help="Configuration file path"
     )
     parser.add_argument(

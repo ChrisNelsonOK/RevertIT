@@ -1,4 +1,4 @@
-"""Snapshot management module for MeshAdminRevertIt."""
+"""Snapshot management module for RevertIT."""
 
 from .manager import SnapshotManager
 

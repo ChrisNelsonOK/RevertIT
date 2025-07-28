@@ -1,4 +1,4 @@
-"""Revert engine module for MeshAdminRevertIt."""
+"""Revert engine module for RevertIT."""
 
 from .engine import RevertEngine
 

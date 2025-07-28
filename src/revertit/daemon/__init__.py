@@ -1,4 +1,4 @@
-"""Daemon module for MeshAdminRevertIt."""
+"""Daemon module for RevertIT."""
 
 from .main import MeshAdminDaemon
 

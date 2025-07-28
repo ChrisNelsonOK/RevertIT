@@ -1,1 +1,1 @@
-"""Test suite for MeshAdminRevertIt."""
+"""Test suite for RevertIT."""

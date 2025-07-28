@@ -1,4 +1,4 @@
-# MeshAdminRevertIt Configuration
+# RevertIT Configuration
 # Default timeout confirmation settings for system configuration changes
 
 # Global settings
@@ -16,10 +16,10 @@ global:
   log_level: INFO
   
   # Log file location
-  log_file: /var/log/meshadmin-revertit.log
+  log_file: /var/log/revertit.log
   
   # PID file location
-  pid_file: /var/run/meshadmin-revertit.pid
+  pid_file: /var/run/revertit.pid
 
 # Snapshot settings
 snapshot:
@@ -27,7 +27,7 @@ snapshot:
   enable_timeshift: true
   
   # Snapshot storage location
-  snapshot_location: /var/lib/meshadmin-revertit/snapshots
+  snapshot_location: /var/lib/revertit/snapshots
   
   # Maximum number of snapshots to keep
   max_snapshots: 10
@@ -90,7 +90,7 @@ notifications:
   email_enabled: false
   email_smtp_server: localhost
   email_smtp_port: 25
-  email_from: meshadmin-revertit@localhost
+  email_from: revertit@localhost
   email_to: []
   
   # Enable syslog notifications

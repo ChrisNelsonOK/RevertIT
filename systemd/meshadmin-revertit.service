@@ -1,6 +1,6 @@
 [Unit]
-Description=MeshAdminRevertIt Daemon
-Documentation=man:meshadmin-revertit(8)
+Description=RevertIT Daemon
+Documentation=man:revertit(8)
 After=network.target local-fs.target
 Wants=network.target
 
@@ -8,7 +8,7 @@ Wants=network.target
 Type=simple
 User=root
 Group=root
-ExecStart=/usr/local/bin/meshadmin-daemon --config /etc/meshadmin-revertit/config.yaml --foreground
+ExecStart=/usr/local/bin/meshadmin-daemon --config /etc/revertit/config.yaml --foreground
 ExecReload=/bin/kill -HUP $MAINPID
 ExecStop=/bin/kill -TERM $MAINPID
 TimeoutStartSec=30
@@ -33,7 +33,7 @@ LimitNPROC=4096
 # Logging
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=meshadmin-revertit
+SyslogIdentifier=revertit
 
 [Install]
 WantedBy=multi-user.target

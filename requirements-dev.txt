@@ -1,4 +1,4 @@
-# Development dependencies for MeshAdminRevertIt
+# Development dependencies for RevertIT
 
 # Testing
 pytest>=7.0.0

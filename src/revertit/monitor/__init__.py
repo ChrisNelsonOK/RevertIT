@@ -1,4 +1,4 @@
-"""Configuration monitoring module for MeshAdminRevertIt."""
+"""Configuration monitoring module for RevertIT."""
 
 from .watcher import ConfigurationMonitor
 

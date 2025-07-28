@@ -9,7 +9,7 @@ import time
 import threading
 from datetime import datetime, timedelta
 
-from meshadmin_revertit.timeout.manager import TimeoutManager, TimeoutEntry
+from revertit.timeout.manager import TimeoutManager, TimeoutEntry
 
 
 class TestTimeoutEntry(unittest.TestCase):

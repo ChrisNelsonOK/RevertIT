@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-MeshAdminRevertIt CLI - Command-line interface for managing the system.
+RevertIT CLI - Command-line interface for managing the system.
 """
 
 import sys
@@ -17,11 +17,11 @@ from ..distro.detector import DistroDetector
 
 
 class MeshAdminCLI:
-    """Command-line interface for MeshAdminRevertIt."""
+    """Command-line interface for RevertIT."""
     
     def __init__(self):
         """Initialize CLI."""
-        self.config_path = "/etc/meshadmin-revertit/config.yaml"
+        self.config_path = "/etc/revertit/config.yaml"
         self.logger = None
         
     def setup_logging(self, verbose: bool = False) -> None:
@@ -49,11 +49,11 @@ class MeshAdminCLI:
         """Show daemon and system status."""
         config = self.load_config()
         
-        print("MeshAdminRevertIt Status")
+        print("RevertIT Status")
         print("=" * 40)
         
         # Check daemon status
-        pid_file = config.get('global', {}).get('pid_file', '/var/run/meshadmin-revertit.pid')
+        pid_file = config.get('global', {}).get('pid_file', '/var/run/revertit.pid')
         if Path(pid_file).exists():
             try:
                 with open(pid_file, 'r') as f:
@@ -89,7 +89,7 @@ class MeshAdminCLI:
             print(f"✗ Configuration file missing: {self.config_path}")
         
         # Log file
-        log_file = config.get('global', {}).get('log_file', '/var/log/meshadmin-revertit.log')
+        log_file = config.get('global', {}).get('log_file', '/var/log/revertit.log')
         if Path(log_file).exists():
             print(f"✓ Log file: {log_file}")
         else:
@@ -104,7 +104,7 @@ class MeshAdminCLI:
         
         try:
             daemon = MeshAdminDaemon(config_path=self.config_path)
-            print("Starting MeshAdminRevertIt daemon...")
+            print("Starting RevertIT daemon...")
             daemon.start()
             return 0
         except Exception as e:
@@ -114,7 +114,7 @@ class MeshAdminCLI:
     def cmd_stop(self, args) -> int:
         """Stop the daemon."""
         config = self.load_config()
-        pid_file = config.get('global', {}).get('pid_file', '/var/run/meshadmin-revertit.pid')
+        pid_file = config.get('global', {}).get('pid_file', '/var/run/revertit.pid')
         
         if not Path(pid_file).exists():
             print("Daemon is not running")
@@ -285,7 +285,7 @@ class MeshAdminCLI:
         """Test system compatibility and configuration."""
         config = self.load_config()
         
-        print("MeshAdminRevertIt System Test")
+        print("RevertIT System Test")
         print("=" * 40)
         
         # Test distribution detection
@@ -348,12 +348,12 @@ class MeshAdminCLI:
 def main():
     """Main entry point for CLI."""
     parser = argparse.ArgumentParser(
-        description="MeshAdminRevertIt - Timed confirmation system for Linux configuration changes"
+        description="RevertIT - Timed confirmation system for Linux configuration changes"
     )
     
     parser.add_argument(
         '--config', 
-        default='/etc/meshadmin-revertit/config.yaml',
+        default='/etc/revertit/config.yaml',
         help='Configuration file path'
     )
     parser.add_argument(

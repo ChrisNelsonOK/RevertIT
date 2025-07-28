@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-# MeshAdminRevertIt Installation Script
-# This script installs MeshAdminRevertIt on Ubuntu Linux and compatible distributions
+# RevertIT Installation Script
+# This script installs RevertIT on Ubuntu Linux and compatible distributions
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
@@ -16,9 +16,9 @@ NC='\033[0m' # No Color
 
 # Configuration
 INSTALL_PREFIX="/usr/local"
-CONFIG_DIR="/etc/meshadmin-revertit"
+CONFIG_DIR="/etc/revertit"
 LOG_DIR="/var/log"
-DATA_DIR="/var/lib/meshadmin-revertit"
+DATA_DIR="/var/lib/revertit"
 SYSTEMD_DIR="/etc/systemd/system"
 
 # Check if running as root
@@ -198,7 +198,7 @@ create_directories() {
 
 # Install Python package
 install_package() {
-    print_status "Installing MeshAdminRevertIt Python package..."
+    print_status "Installing RevertIT Python package..."
     
     cd "$PROJECT_DIR"
     
@@ -229,13 +229,13 @@ install_configuration() {
     
     # Copy default configuration if it doesn't exist
     if [[ ! -f "$CONFIG_DIR/config.yaml" ]]; then
-        cp "$PROJECT_DIR/config/meshadmin-revertit.yaml" "$CONFIG_DIR/config.yaml"
+        cp "$PROJECT_DIR/config/revertit.yaml" "$CONFIG_DIR/config.yaml"
         print_success "Default configuration installed"
     else
         print_warning "Configuration file already exists - not overwriting"
         
         # Create backup of new config
-        cp "$PROJECT_DIR/config/meshadmin-revertit.yaml" "$CONFIG_DIR/config.yaml.new"
+        cp "$PROJECT_DIR/config/revertit.yaml" "$CONFIG_DIR/config.yaml.new"
         print_status "New configuration saved as config.yaml.new"
     fi
     
@@ -254,26 +254,26 @@ install_systemd_service() {
     fi
     
     # Copy service file
-    cp "$PROJECT_DIR/systemd/meshadmin-revertit.service" "$SYSTEMD_DIR/"
+    cp "$PROJECT_DIR/systemd/revertit.service" "$SYSTEMD_DIR/"
     
     # Set permissions
-    chmod 644 "$SYSTEMD_DIR/meshadmin-revertit.service"
-    chown root:root "$SYSTEMD_DIR/meshadmin-revertit.service"
+    chmod 644 "$SYSTEMD_DIR/revertit.service"
+    chown root:root "$SYSTEMD_DIR/revertit.service"
     
     # Reload systemd
     systemctl daemon-reload
     
     print_success "systemd service installed"
-    print_status "To enable at boot: systemctl enable meshadmin-revertit"
-    print_status "To start now: systemctl start meshadmin-revertit"
+    print_status "To enable at boot: systemctl enable revertit"
+    print_status "To start now: systemctl start revertit"
 }
 
 # Create log rotation configuration
 setup_log_rotation() {
     print_status "Setting up log rotation..."
     
-    cat > /etc/logrotate.d/meshadmin-revertit << EOF
-/var/log/meshadmin-revertit.log {
+    cat > /etc/logrotate.d/revertit << EOF
+/var/log/revertit.log {
     daily
     rotate 30
     compress
@@ -282,7 +282,7 @@ setup_log_rotation() {
     notifempty
     create 644 root root
     postrotate
-        systemctl reload meshadmin-revertit || true
+        systemctl reload revertit || true
     endscript
 }
 EOF
@@ -295,10 +295,10 @@ verify_installation() {
     print_status "Verifying installation..."
     
     # Check if commands are available
-    if command -v meshadmin-revertit &> /dev/null; then
-        print_success "meshadmin-revertit command available"
+    if command -v revertit &> /dev/null; then
+        print_success "revertit command available"
     else
-        print_error "meshadmin-revertit command not found"
+        print_error "revertit command not found"
         return 1
     fi
     
@@ -312,7 +312,7 @@ verify_installation() {
     # Test basic functionality
     print_status "Testing basic functionality..."
     
-    if meshadmin-revertit test; then
+    if revertit test; then
         print_success "Basic functionality test passed"
     else
         print_warning "Basic functionality test failed - check configuration"
@@ -324,23 +324,23 @@ verify_installation() {
 # Print post-installation instructions
 print_post_install() {
     echo
-    print_success "MeshAdminRevertIt installation completed!"
+    print_success "RevertIT installation completed!"
     echo
     echo -e "${BLUE}Next steps:${NC}"
     echo "1. Review configuration: $CONFIG_DIR/config.yaml"
-    echo "2. Enable service: systemctl enable meshadmin-revertit"
-    echo "3. Start service: systemctl start meshadmin-revertit"
-    echo "4. Check status: meshadmin-revertit status"
-    echo "5. Run system test: meshadmin-revertit test"
+    echo "2. Enable service: systemctl enable revertit"
+    echo "3. Start service: systemctl start revertit"
+    echo "4. Check status: revertit status"
+    echo "5. Run system test: revertit test"
     echo
     echo -e "${BLUE}Usage examples:${NC}"
-    echo "  meshadmin-revertit status          # Show system status"
-    echo "  meshadmin-revertit snapshots list  # List snapshots"
-    echo "  meshadmin-revertit confirm <id>    # Confirm a change"
+    echo "  revertit status          # Show system status"
+    echo "  revertit snapshots list  # List snapshots"
+    echo "  revertit confirm <id>    # Confirm a change"
     echo
     echo -e "${BLUE}Documentation:${NC}"
     echo "  Configuration: $CONFIG_DIR/config.yaml"
-    echo "  Log file: /var/log/meshadmin-revertit.log"
+    echo "  Log file: /var/log/revertit.log"
     echo "  Data directory: $DATA_DIR"
     echo "  TimeShift: Enhanced snapshot capabilities included"
     echo
@@ -348,7 +348,7 @@ print_post_install() {
 
 # Main installation function
 main() {
-    echo -e "${BLUE}MeshAdminRevertIt Installation Script${NC}"
+    echo -e "${BLUE}RevertIT Installation Script${NC}"
     echo "======================================"
     echo
     
@@ -373,13 +373,13 @@ main() {
 # Handle command line arguments
 case "${1:-}" in
     --help|-h)
-        echo "MeshAdminRevertIt Installation Script"
+        echo "RevertIT Installation Script"
         echo
         echo "Usage: $0 [options]"
         echo
         echo "Options:"
         echo "  --help, -h     Show this help message"
-        echo "  --uninstall    Uninstall MeshAdminRevertIt"
+        echo "  --uninstall    Uninstall RevertIT"
         echo
         exit 0
         ;;

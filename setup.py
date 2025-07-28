@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-MeshAdminRevertIt - Timed confirmation system for Linux configuration changes
+RevertIT - Timed confirmation system for Linux configuration changes
 Automatically reverts system changes if not confirmed within timeout period.
 """
 
@@ -13,7 +13,7 @@ with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name="meshadmin-revertit",
+    name="revertit",
     version="1.0.0",
     author="MeshAdmin",
     description="Timed confirmation system for Linux configuration changes with automatic revert",
@@ -52,13 +52,13 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "meshadmin-revertit=meshadmin_revertit.cli.main:main",
-            "meshadmin-daemon=meshadmin_revertit.daemon.main:main",
+            "revertit=revertit.cli.main:main",
+            "meshadmin-daemon=revertit.daemon.main:main",
         ],
     },
     include_package_data=True,
     package_data={
-        "meshadmin_revertit": [
+        "revertit": [
             "config/*.yaml",
             "systemd/*.service",
         ],

@@ -24,7 +24,7 @@ class SnapshotManager:
         self.logger = logging.getLogger(__name__)
         
         self.timeshift_available = self._check_timeshift_availability()
-        self.snapshot_location = Path(config.get('snapshot_location', '/var/lib/meshadmin-revertit/snapshots'))
+        self.snapshot_location = Path(config.get('snapshot_location', '/var/lib/revertit/snapshots'))
         self.max_snapshots = config.get('max_snapshots', 10)
         self.compress_snapshots = config.get('compress_snapshots', True)
         
@@ -56,10 +56,10 @@ class SnapshotManager:
     def create_snapshot(self, description: str = None) -> str:
         """Create a new system snapshot."""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        snapshot_id = f"meshadmin_revertit_{timestamp}"
+        snapshot_id = f"revertit_{timestamp}"
         
         if description is None:
-            description = f"MeshAdminRevertIt snapshot created at {datetime.now().isoformat()}"
+            description = f"RevertIT snapshot created at {datetime.now().isoformat()}"
         
         self.logger.info(f"Creating snapshot: {snapshot_id}")
         
@@ -105,7 +105,7 @@ class SnapshotManager:
                         return part
         
         # Fallback: generate our own ID
-        return f"meshadmin_revertit_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        return f"revertit_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
     
     def _create_manual_snapshot(self, snapshot_id: str, description: str) -> str:
         """Create manual snapshot of critical configuration files."""
@@ -276,7 +276,7 @@ class SnapshotManager:
                 snapshot_info = {
                     'id': snapshot_id,
                     'type': 'manual',
-                    'timestamp': snapshot_id.replace('meshadmin_revertit_', ''),
+                    'timestamp': snapshot_id.replace('revertit_', ''),
                     'description': 'Manual snapshot'
                 }
                 

@@ -11,7 +11,7 @@ import os
 import json
 from pathlib import Path
 
-from meshadmin_revertit.snapshot.manager import SnapshotManager
+from revertit.snapshot.manager import SnapshotManager
 
 
 class TestSnapshotManager(unittest.TestCase):

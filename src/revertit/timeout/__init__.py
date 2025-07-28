@@ -1,4 +1,4 @@
-"""Timeout management module for MeshAdminRevertIt."""
+"""Timeout management module for RevertIT."""
 
 from .manager import TimeoutManager
 

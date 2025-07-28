@@ -1,4 +1,4 @@
-"""Distribution detection module for MeshAdminRevertIt."""
+"""Distribution detection module for RevertIT."""
 
 from .detector import DistroDetector
 

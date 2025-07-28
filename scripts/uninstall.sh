@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# MeshAdminRevertIt Uninstallation Script
+# RevertIT Uninstallation Script
 
 # Colors for output
 RED='\033[0;31m'
@@ -11,9 +11,9 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-CONFIG_DIR="/etc/meshadmin-revertit"
+CONFIG_DIR="/etc/revertit"
 LOG_DIR="/var/log"
-DATA_DIR="/var/lib/meshadmin-revertit"
+DATA_DIR="/var/lib/revertit"
 SYSTEMD_DIR="/etc/systemd/system"
 
 # Print colored output
@@ -44,15 +44,15 @@ check_root() {
 
 # Stop and disable service
 stop_service() {
-    print_status "Stopping MeshAdminRevertIt service..."
+    print_status "Stopping RevertIT service..."
     
-    if systemctl is-active --quiet meshadmin-revertit; then
-        systemctl stop meshadmin-revertit
+    if systemctl is-active --quiet revertit; then
+        systemctl stop revertit
         print_success "Service stopped"
     fi
     
-    if systemctl is-enabled --quiet meshadmin-revertit 2>/dev/null; then
-        systemctl disable meshadmin-revertit
+    if systemctl is-enabled --quiet revertit 2>/dev/null; then
+        systemctl disable revertit
         print_success "Service disabled"
     fi
 }
@@ -61,8 +61,8 @@ stop_service() {
 remove_systemd_service() {
     print_status "Removing systemd service..."
     
-    if [[ -f "$SYSTEMD_DIR/meshadmin-revertit.service" ]]; then
-        rm -f "$SYSTEMD_DIR/meshadmin-revertit.service"
+    if [[ -f "$SYSTEMD_DIR/revertit.service" ]]; then
+        rm -f "$SYSTEMD_DIR/revertit.service"
         systemctl daemon-reload
         print_success "systemd service removed"
     else
@@ -74,8 +74,8 @@ remove_systemd_service() {
 uninstall_package() {
     print_status "Uninstalling Python package..."
     
-    if pip3 show meshadmin-revertit &>/dev/null; then
-        pip3 uninstall -y meshadmin-revertit
+    if pip3 show revertit &>/dev/null; then
+        pip3 uninstall -y revertit
         print_success "Python package uninstalled"
     else
         print_status "Python package not found"
@@ -91,7 +91,7 @@ remove_files() {
     echo -e "${YELLOW}The following directories contain configuration and data:${NC}"
     echo "  Configuration: $CONFIG_DIR"
     echo "  Data/Snapshots: $DATA_DIR"
-    echo "  Logs: $LOG_DIR/meshadmin-revertit.log*"
+    echo "  Logs: $LOG_DIR/revertit.log*"
     echo
     
     read -p "Remove configuration files? (y/N): " remove_config
@@ -116,15 +116,15 @@ remove_files() {
     
     read -p "Remove log files? (y/N): " remove_logs
     if [[ "$remove_logs" =~ ^[Yy]$ ]]; then
-        rm -f "$LOG_DIR"/meshadmin-revertit.log*
+        rm -f "$LOG_DIR"/revertit.log*
         print_success "Log files removed"
     else
         print_status "Log files preserved"
     fi
     
     # Remove logrotate configuration
-    if [[ -f /etc/logrotate.d/meshadmin-revertit ]]; then
-        rm -f /etc/logrotate.d/meshadmin-revertit
+    if [[ -f /etc/logrotate.d/revertit ]]; then
+        rm -f /etc/logrotate.d/revertit
         print_success "Log rotation configuration removed"
     fi
 }
@@ -151,8 +151,8 @@ cleanup_processes() {
     fi
     
     # Remove PID file if exists
-    if [[ -f /var/run/meshadmin-revertit.pid ]]; then
-        rm -f /var/run/meshadmin-revertit.pid
+    if [[ -f /var/run/revertit.pid ]]; then
+        rm -f /var/run/revertit.pid
         print_success "PID file removed"
     fi
 }
@@ -162,8 +162,8 @@ verify_uninstall() {
     print_status "Verifying uninstallation..."
     
     # Check if commands are still available
-    if command -v meshadmin-revertit &>/dev/null; then
-        print_warning "meshadmin-revertit command still available"
+    if command -v revertit &>/dev/null; then
+        print_warning "revertit command still available"
         return 1
     fi
     
@@ -173,7 +173,7 @@ verify_uninstall() {
     fi
     
     # Check if service is still installed
-    if [[ -f "$SYSTEMD_DIR/meshadmin-revertit.service" ]]; then
+    if [[ -f "$SYSTEMD_DIR/revertit.service" ]]; then
         print_warning "systemd service file still exists"
         return 1
     fi
@@ -184,11 +184,11 @@ verify_uninstall() {
 
 # Main uninstallation function
 main() {
-    echo -e "${BLUE}MeshAdminRevertIt Uninstallation Script${NC}"
+    echo -e "${BLUE}RevertIT Uninstallation Script${NC}"
     echo "========================================"
     echo
     
-    print_warning "This will remove MeshAdminRevertIt from your system."
+    print_warning "This will remove RevertIT from your system."
     echo
     read -p "Are you sure you want to continue? (y/N): " confirm
     
@@ -207,9 +207,9 @@ main() {
     
     if verify_uninstall; then
         echo
-        print_success "MeshAdminRevertIt has been successfully uninstalled!"
+        print_success "RevertIT has been successfully uninstalled!"
         echo
-        print_status "Thank you for using MeshAdminRevertIt."
+        print_status "Thank you for using RevertIT."
     else
         echo
         print_warning "Uninstallation completed with warnings."

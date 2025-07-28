@@ -1,4 +1,4 @@
-# Makefile for MeshAdminRevertIt
+# Makefile for RevertIT
 
 .PHONY: help install install-dev test lint format clean build docs
 
@@ -31,20 +31,20 @@ test:
 	python3 -m pytest tests/ -v
 
 test-cov:
-	python3 -m pytest tests/ -v --cov=meshadmin_revertit --cov-report=html --cov-report=term
+	python3 -m pytest tests/ -v --cov=revertit --cov-report=html --cov-report=term
 
 # Code quality targets
 lint:
-	flake8 src/meshadmin_revertit tests/
-	mypy src/meshadmin_revertit
+	flake8 src/revertit tests/
+	mypy src/revertit
 
 format:
-	black src/meshadmin_revertit tests/
-	isort src/meshadmin_revertit tests/
+	black src/revertit tests/
+	isort src/revertit tests/
 
 format-check:
-	black --check src/meshadmin_revertit tests/
-	isort --check-only src/meshadmin_revertit tests/
+	black --check src/revertit tests/
+	isort --check-only src/revertit tests/
 
 # Build targets
 clean:
@@ -66,7 +66,7 @@ docs:
 
 # System installation targets (require sudo)
 system-install:
-	@echo "Installing MeshAdminRevertIt system-wide..."
+	@echo "Installing RevertIT system-wide..."
 	@if [ "$$(id -u)" != "0" ]; then \
 		echo "Error: This target must be run with sudo"; \
 		exit 1; \
@@ -74,7 +74,7 @@ system-install:
 	./scripts/install.sh
 
 system-uninstall:
-	@echo "Uninstalling MeshAdminRevertIt system-wide..."
+	@echo "Uninstalling RevertIT system-wide..."
 	@if [ "$$(id -u)" != "0" ]; then \
 		echo "Error: This target must be run with sudo"; \
 		exit 1; \
