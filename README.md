@@ -1,104 +1,164 @@
-# RevertIT
+# 🔄 Revert-IT
 
-A timed confirmation system for Linux configuration changes with automatic revert capabilities. Designed for remote system administrators to prevent loss of access due to configuration errors.
+> 🛡️ A timed confirmation system for (Li)nux configuration changes with automatic revert capabilities. Designed for remote system administrators to prevent loss of access due to configuration errors.
 
-## Overview
+---
 
-RevertIT monitors critical system configuration files and enforces timed confirmations for any changes. If changes are not confirmed within the specified timeout period, or if connectivity is lost, the system automatically reverts to the previous configuration using snapshots.
+## 📋 Overview
 
-### Key Features
+Revert-IT monitors critical system configuration files and enforces timed confirmations for any changes. If changes are not confirmed within the specified timeout period, or if connectivity is lost, the system automatically reverts to the previous configuration using snapshots.
 
-- **Automatic Configuration Monitoring** - Watches critical system files (network, SSH, firewall, services)
-- **Timed Confirmation System** - Requires explicit confirmation of changes within configurable timeouts
-- **Automatic Revert** - Reverts changes if not confirmed or if connectivity is lost
-- **TimeShift Integration** - Uses TimeShift for system-level snapshots when available
-- **Multi-Distribution Support** - Works with Ubuntu, Debian, CentOS, RHEL, Fedora, and more
-- **Connectivity Checking** - Tests network connectivity before performing reverts
-- **Flexible Configuration** - Customizable timeouts, paths, and behaviors per change type
+## ✨ Key Features
 
-## Architecture
+| Feature                                  | Description                                                  |
+| ---------------------------------------- | ------------------------------------------------------------ |
+| 🔍 **Automatic Configuration Monitoring** | Watches critical system files (network, SSH, firewall, services) |
+| ⏰ **Timed Confirmation System**          | Requires explicit confirmation of changes within configurable timeouts |
+| 🔄 **Automatic Revert**                   | Reverts changes if not confirmed or if connectivity is lost  |
+| 📸 **TimeShift Integration**              | Uses TimeShift for system-level snapshots when available     |
+| 🐧 **Multi-Distribution Support**         | Works with Ubuntu, Debian, CentOS, RHEL, Fedora, and more    |
+| 🌐 **Connectivity Checking**              | Tests network connectivity before performing reverts         |
+| ⚙️ **Flexible Configuration**             | Customizable timeouts, paths, and behaviors per change type  |
 
-### Core Components
+---
 
-1. **RevertIT Daemon** (`revertit-daemon`) - Main service that monitors system changes
-2. **ConfigurationMonitor** - Watches critical system files using filesystem events
-3. **SnapshotManager** - Manages system snapshots (TimeShift integration + manual snapshots)
-4. **TimeoutManager** - Handles timed confirmations and automatic reverts
-5. **RevertEngine** - Performs automatic reversion of configuration changes
-6. **DistroDetector** - Detects Linux distribution and provides compatibility information
-7. **CLI Interface** (`revertit`) - Command-line tools for management
+## 🏗️ Architecture
 
-### How It Works
+```
+                     ┌─────────────────┐
+                     │ Configuration   │
+                     │    Change       │
+                     └────────┬────────┘
+                              │
+                              ▼
+                   ┌──────────────────────┐
+                   │ ConfigurationMonitor │
+                   └──────────┬───────────┘
+                              │
+                              ▼
+                    ┌─────────────────────┐
+                    │  SnapshotManager    │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │  TimeoutManager     │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                          ┌─────────┐
+                          │Confirmed│
+                          │    ?    │
+                          └────┬────┘
+                         Yes ┌─┴─┐ No
+                          ┌──┘   └──┐
+                          ▼         ▼
+                  ┌──────────┐  ┌──────────┐
+                  │  Accept  │  │  Revert  │
+                  │  Change  │  │  Engine  │
+                  └──────────┘  └─────┬────┘
+                                      │
+                                      ▼
+                              ┌──────────────┐
+                              │   Restore    │
+                              │   Snapshot   │
+                              └──────────────┘
+```
 
-1. **Monitoring Phase**: The daemon monitors critical configuration files for changes
-2. **Snapshot Creation**: When a change is detected, a snapshot is created before the change
-3. **Timeout Start**: A timeout is started requiring confirmation of the change
-4. **Connectivity Monitoring**: The system monitors network connectivity during the timeout
-5. **Confirmation or Revert**: 
-   - If confirmed in time: change is accepted and monitoring continues
-   - If timeout expires or connectivity is lost: automatic revert is performed
+## 🧩 Core Components
 
-## Installation
+| Component                  | Purpose                                                      |
+| -------------------------- | ------------------------------------------------------------ |
+| 🔧 **RevertIT Daemon**      | Main service that monitors system changes                    |
+| 👁️ **ConfigurationMonitor** | Watches critical system files using filesystem events        |
+| 📸 **SnapshotManager**      | Manages system snapshots (TimeShift integration + manual snapshots) |
+| ⏱️ **TimeoutManager**       | Handles timed confirmations and automatic reverts            |
+| 🔄 **RevertEngine**         | Performs automatic reversion of configuration changes        |
+| 🐧 **DistroDetector**       | Detects Linux distribution and provides compatibility information |
+| 💻 **CLI Interface**        | Command-line tools for management                            |
 
-### Prerequisites
+## 🔄 How It Works
 
-- Linux system with systemd (Ubuntu 18.04+, Debian 10+, CentOS 7+, RHEL 7+, Fedora 28+)
-- Python 3.8 or higher
-- Root privileges for installation and operation
-- TimeShift (optional, for enhanced snapshot capabilities)
+```
+1. User makes config change
+   └─> Monitor detects change
+       └─> Create snapshot
+           └─> Start timeout timer
+               └─> Show confirmation prompt
+                   │
+                   ├─> [User confirms in time]
+                   │   └─> Accept change
+                   │
+                   └─> [Timeout expires/Connection lost]
+                       └─> Trigger revert
+                           └─> Restore previous state
+```
 
-### Quick Install
+---
+
+## 🚀 Installation
+
+### 📋 Prerequisites
+
+- 🐧 Linux system with systemd (Ubuntu 18.04+, Debian 10+, CentOS 7+, RHEL 7+, Fedora 28+)
+- 🐍 Python 3.8 or higher
+- 👑 Root privileges for installation and operation
+- 📸 TimeShift (optional & recommended, for enhanced snapshot capabilities)
+
+### ⚡ Quick Install
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-org/revertit.git
-cd revertit
+# 📥 Clone the repository
+git clone https://github.com/chrisnelsonok/revertit.git
+cd RevertIT
 
-# Run installation script
+# 🚀 Run installation script
 sudo ./scripts/install.sh
 ```
 
-### Manual Installation
+### 🔧 Manual Installation
 
 ```bash
-# Install system dependencies
+# 📦 Install system dependencies
 sudo apt update && sudo apt install python3-pip python3-dev build-essential rsync inotify-tools
 
-# Install Python package
+# 🐍 Install Python package
 sudo pip3 install -e .
 
-# Create directories
-sudo mkdir -p /etc/revertit /var/lib/revertit
+# 📁 Create directories
+sudo mkdir -p /etc/RevertIT /var/lib/RevertIT
 
-# Copy configuration
+# ⚙️ Copy configuration
 sudo cp config/revertit.yaml /etc/revertit/config.yaml
 
-# Install systemd service
+# 🔧 Install systemd service
 sudo cp systemd/revertit.service /etc/systemd/system/
 sudo systemctl daemon-reload
 ```
 
-## Configuration
+---
 
-The main configuration file is located at `/etc/revertit/config.yaml`.
+## ⚙️ Configuration
 
-### Key Configuration Options
+> 📍 The main configuration file is located at `/etc/revertit/config.yaml`.
+
+### 🔑 Key Configuration Options
 
 ```yaml
-# Global settings
+# 🌐 Global settings
 global:
-  default_timeout: 300        # Default timeout (5 minutes)
-  max_timeout: 1800          # Maximum timeout (30 minutes)
+  default_timeout: 300        # ⏰ Default timeout (5 minutes)
+  max_timeout: 1800          # ⏰ Maximum timeout (30 minutes)
   log_level: INFO
   log_file: /var/log/revertit.log
 
-# Snapshot settings
+# 📸 Snapshot settings
 snapshot:
   enable_timeshift: true
   snapshot_location: /var/lib/revertit/snapshots
   max_snapshots: 10
 
-# Monitoring paths
+# 👁️ Monitoring paths
 monitoring:
   network_configs:
     - /etc/network/interfaces
@@ -113,7 +173,7 @@ monitoring:
     - /etc/iptables/rules.v4
     - /etc/ufw/*
 
-# Timeout behavior
+# ⏱️ Timeout behavior
 timeout:
   timeout_action: revert
   connectivity_check: true
@@ -123,229 +183,310 @@ timeout:
   revert_grace_period: 30
 ```
 
-## Usage
+---
 
-### Starting the Service
+## 💻 Usage
+
+### 🚀 Starting the Service
 
 ```bash
-# Enable and start the service
+# ✅ Enable and start the service
 sudo systemctl enable revertit
 sudo systemctl start revertit
 
-# Check status
+# 📊 Check status
 sudo systemctl status revertit
 ```
 
-### Command Line Interface
+### 🖥️ Command Line Interface
 
 ```bash
-# Show system status
+# 📊 Show system status
 revertit status
 
-# List active timeouts
+# ⏰ List active timeouts
 revertit timeouts
 
-# Confirm a configuration change
+# ✅ Confirm a configuration change
 revertit confirm <change-id>
 
-# Manage snapshots
+# 📸 Manage snapshots
 revertit snapshots list
-revertit snapshots create --description "Manual snapshot"
-revertit snapshots restore <snapshot-id>
+revertit snapshots create --description "Manual backup before major changes"
 
-# Test system compatibility
+# 🧪 Test system compatibility
 revertit test
 ```
 
-### Example Workflow
+### 📝 Example Workflow
 
-1. **Make a configuration change** (e.g., edit `/etc/ssh/sshd_config`)
-2. **System detects change** and creates a snapshot
-3. **Timeout starts** (default 5 minutes for SSH changes)
-4. **System shows warning** about pending timeout
-5. **Confirm the change**: `revertit confirm ssh_1234567890`
-6. **Or let it auto-revert** if you lose connectivity or forget to confirm
+```
+┌────────────────┐     ┌───────────────────┐     ┌─────────────────┐
+│ 🔧 Make Config │ ──> │ 🔍 System Detects │ ──> │ 📸 Create      │
+│    Change      │     │    Change         │     │    Snapshot     │
+└────────────────┘     └───────────────────┘     └────────┬────────┘
+                                                           │
+                                                           ▼
+┌────────────────┐     ┌───────────────────┐     ┌─────────────────┐
+│ ✅ Accept      │ <── │   User Action?    │ <── │ ⏰ Start        │
+│    Change      │     │                   │     │    Timeout      │
+└────────────────┘     └─────────┬─────────┘     └────────┬────────┘
+                                 │                         │
+                                 │ Timeout/Lost           ▼
+                                 │ Connection      ┌─────────────────┐
+                                 │                 │ ⚠️ Show Warning │
+                                 ▼                 └─────────────────┘
+                         ┌────────────────┐
+                         │ 🔄 Auto-Revert │
+                         └────────────────┘
+```
 
-### Change Categories and Timeouts
+1. **🔧 Make a configuration change** (e.g., edit `/etc/ssh/sshd_config`)
+2. **🔍 System detects change** and creates a snapshot
+3. **⏰ Timeout starts** (default 5 minutes for SSH changes)
+4. **⚠️ System shows warning** about pending timeout
+5. **✅ Confirm the change**: `revertit confirm ssh_1234567890`
+6. **🔄 Or let it auto-revert** if you lose connectivity or forget to confirm
 
-- **Network changes** (`/etc/network/*`, `/etc/netplan/*`): 10 minutes
-- **SSH changes** (`/etc/ssh/*`): 15 minutes  
-- **Firewall changes** (`/etc/iptables/*`, `/etc/ufw/*`): 5 minutes
-- **Service changes** (`/etc/systemd/system/*`): 5 minutes
-- **Other system changes**: 5 minutes
+### ⏰ Change Categories and Timeouts
 
-## Safety Features
+| Category       | Files                              | Timeout    |
+| -------------- | ---------------------------------- | ---------- |
+| 🌐 **Network**  | `/etc/network/*`, `/etc/netplan/*` | 10 minutes |
+| 🔐 **SSH**      | `/etc/ssh/*`                       | 15 minutes |
+| 🛡️ **Firewall** | `/etc/iptables/*`, `/etc/ufw/*`    | 5 minutes  |
+| 🔧 **Services** | `/etc/systemd/system/*`            | 5 minutes  |
+| 📁 **Other**    | Various system files               | 5 minutes  |
 
-### Connectivity Checking
+---
+
+## 🛡️ Safety Features
+
+### 🌐 Connectivity Checking
+
 Before reverting network changes, the system tests connectivity to configured endpoints (8.8.8.8, 1.1.1.1, google.com by default).
 
-### Grace Period
+### ⏳ Grace Period
+
 A configurable grace period (default 30 seconds) is provided before performing reverts, allowing for last-minute confirmations.
 
-### Snapshot Management
-- Automatic cleanup of old snapshots
-- Integration with TimeShift for system-level snapshots
-- Manual snapshot creation and restoration
-- Compressed snapshots to save disk space
+### 📸 Snapshot Management
 
-### Default Configurations
+- 🧹 **Automatic cleanup** of old snapshots
+- 🔗 **Integration with TimeShift** for system-level snapshots
+- 🎯 **Manual snapshot creation** and restoration
+- 🗜️ **Compressed snapshots** to save disk space
+
+### 🔧 Default Configurations
+
 When snapshots are unavailable, the system can restore sensible default configurations for critical services.
 
-## Distribution Support
+---
 
-### Full Support
-- **Ubuntu** 18.04, 20.04, 22.04, 24.04
-- **Debian** 10, 11, 12
-- **CentOS** 7, 8, 9
-- **RHEL** 7, 8, 9
-- **Fedora** 32+
+## 🐧 Distribution Support
 
-### Experimental Support
-- **Arch Linux**
-- **openSUSE**
-- **Alpine Linux**
+### ✅ Full Support
 
-### Distribution-Specific Features
-- Automatic detection of package managers (apt, yum, dnf, pacman)
-- Service management system detection (systemd, SysV)
-- Network configuration system detection (netplan, NetworkManager, interfaces)
-- Firewall system detection (ufw, firewalld, iptables)
+| Distribution | Versions                   |
+| ------------ | -------------------------- |
+| 🟠 **Ubuntu** | 18.04, 20.04, 22.04, 24.04 |
+| 🔴 **Debian** | 10, 11, 12                 |
+| 🟡 **CentOS** | 7, 8, 9                    |
+| 🔴 **RHEL**   | 7, 8, 9                    |
+| 🔵 **Fedora** | 32+                        |
 
-## Logging and Monitoring
+### 🧪 Experimental Support
 
-### Log Files
-- Main log: `/var/log/revertit.log`
-- Automatic log rotation configured
-- Structured logging with timestamps and severity levels
+- 🔵 Arch Linux
+- 🟢 openSUSE
+- 🏔️ Alpine Linux
+- 🪟 Windows WSL
+- 🍎 MacOS (Coming Soon!)
+- 🪟 Windows OS (Planned)
 
-### Log Levels
-- **DEBUG**: Detailed operation information
-- **INFO**: General operation status
-- **WARNING**: Timeout warnings and non-critical issues
-- **ERROR**: Errors during operation
-- **CRITICAL**: Critical failures requiring attention
+### 🔧 Distribution-Specific Features
 
-### Notifications
-- Syslog integration for system logs
-- Desktop notifications (when GUI available)
-- Email notifications (configurable)
+- 📦 **Automatic detection** of package managers (apt, yum, dnf, pacman)
+- 🔧 **Service management** system detection (systemd, SysV)
+- 🌐 **Network configuration** system detection (netplan, NetworkManager, interfaces)
+- 🛡️ **Firewall system** detection (ufw, firewalld, iptables)
 
-## Security Considerations
+---
 
-### Permissions
-- Runs as root (required for system configuration management)
-- Configuration files are root-owned and protected
-- Snapshot directories have restricted permissions
+## 📊 Logging and Monitoring
 
-### Network Security
-- Minimal network exposure (only outbound connectivity checks)
-- No remote management interfaces by default
-- All operations are local to the system
+### 📝 Log Files
 
-### Snapshot Security
-- Snapshots may contain sensitive configuration data
-- Automatic cleanup prevents accumulation of old snapshots
-- Snapshots are stored in protected directories
+- 📄 **Main log**: `/var/log/revertit.log`
+- 🔄 **Automatic log rotation** configured
+- 📋 **Structured logging** with timestamps and severity levels
 
-## Troubleshooting
+### 📊 Log Levels
 
-### Common Issues
+| Level          | Description                              |
+| -------------- | ---------------------------------------- |
+| 🔍 **DEBUG**    | Detailed operation information           |
+| ℹ️ **INFO**     | General operation status                 |
+| ⚠️ **WARNING**  | Timeout warnings and non-critical issues |
+| ❌ **ERROR**    | Errors during operation                  |
+| 🚨 **CRITICAL** | Critical failures requiring attention    |
 
-**Service won't start**
+### 📢 Notifications
+
+- 📋 **Syslog integration** for system logs
+- 🖥️ **Desktop notifications** (when GUI available)
+- 📧 **Email notifications** (configurable)
+
+---
+
+## 🔒 Security Considerations
+
+### 👑 Permissions
+
+- 🔐 **Runs as root** (required for system configuration management)
+- 📁 **Configuration files** are root-owned and protected
+- 🛡️ **Snapshot directories** have restricted permissions
+
+### 🌐 Network Security
+
+- 🔒 **Minimal network exposure** (only outbound connectivity checks)
+- 🚫 **No remote management** interfaces by default
+- 🏠 **All operations** are local to the system
+
+### 📸 Snapshot Security
+
+- ⚠️ **Snapshots may contain** sensitive configuration data
+- 🧹 **Automatic cleanup** prevents accumulation of old snapshots
+- 🔐 **Snapshots are stored** in protected directories
+
+---
+
+## 🔧 Troubleshooting
+
+### ❓ Common Issues
+
+#### 🚫 Service won't start
+
 ```bash
-# Check service status and logs
+# 📊 Check service status and logs
 sudo systemctl status revertit
 sudo journalctl -u revertit -f
 
-# Test configuration
+# 🧪 Test configuration
 revertit test
 ```
 
-**TimeShift not working**
+#### 📸 TimeShift not working
+
 ```bash
-# Install TimeShift
+# 📦 Install TimeShift
 sudo apt install timeshift  # Ubuntu/Debian
 
-# Configure TimeShift
+# ⚙️ Configure TimeShift
 sudo timeshift --list
 ```
 
-**Permissions errors**
+#### 🔐 Permissions errors
+
 ```bash
-# Ensure proper permissions
+# 🔧 Ensure proper permissions
 sudo chown -R root:root /etc/revertit
 sudo chmod 644 /etc/revertit/config.yaml
 ```
 
-### Debug Mode
+### 🐛 Debug Mode
+
 ```bash
-# Run in foreground with debug logging
-sudo revertit-daemon --config /etc/revertit/config.yaml --foreground
+# 🔍 Run in foreground with debug logging
+sudo meshadmin-daemon --config /etc/revertit/config.yaml --foreground
 ```
 
-## Development
+---
 
-### Requirements
-- Python 3.8+
-- pip packages: `psutil`, `watchdog`, `pyyaml`, `croniter`
+## 👨‍💻 Development
 
-### Development Setup
+### 📋 Requirements
+
+- 🐍 Python 3.8+
+- 📦 pip packages: `psutil`, `watchdog`, `pyyaml`, `croniter`
+
+### 🛠️ Development Setup
+
 ```bash
-# Clone repository
-git clone https://github.com/your-org/revertit.git
-cd revertit
+# 📥 Clone repository
+git clone https://github.com/ChrisNelsonOK/RevertIT.git
+cd RevertIT
 
-# Install in development mode
+# 🔧 Install in development mode
 pip3 install -e .
 
-# Run tests
+# 🧪 Run tests
 python -m pytest tests/
 
-# Run linting
+# 🔍 Run linting
 flake8 src/
 black src/
 mypy src/
 ```
 
-### Project Structure
+### 📁 Project Structure
+
 ```
 RevertIT/
-├── src/revertit/     # Main package code
-│   ├── daemon/                 # Daemon implementation
-│   ├── snapshot/               # Snapshot management
-│   ├── monitor/                # Configuration monitoring
-│   ├── timeout/                # Timeout management
-│   ├── revert/                 # Revert engine
-│   ├── distro/                 # Distribution detection
-│   └── cli/                    # Command-line interface
-├── config/                     # Default configuration
-├── systemd/                    # systemd service files
-├── scripts/                    # Installation scripts
-├── tests/                      # Test suite
-└── docs/                       # Documentation
+├── 📦 src/revertit/               # Main package code
+│   ├── 🔧 daemon/                 # Daemon implementation
+│   ├── 📸 snapshot/               # Snapshot management
+│   ├── 👁️ monitor/                # Configuration monitoring
+│   ├── ⏰ timeout/                # Timeout management
+│   ├── 🔄 revert/                 # Revert engine
+│   ├── 🐧 distro/                 # Distribution detection
+│   └── 💻 cli/                    # Command-line interface
+├── ⚙️ config/                     # Default configuration
+├── 🔧 systemd/                    # systemd service files
+├── 📜 scripts/                    # Installation scripts
+├── 🧪 tests/                      # Test suite
+└── 📚 docs/                       # Documentation
 ```
 
-## Contributing
+---
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Ensure all tests pass
-6. Submit a pull request
+## 🤝 Contributing            
 
-## License
+1. 🍴 **Fork** the repository
+2. 🌿 **Create** a feature branch
+3. ✏️ **Make** your changes
+4. 🧪 **Add tests** for new functionality
+5. ✅ **Ensure** all tests pass
+6. 📤 **Submit** a pull request
 
-MIT License - see LICENSE file for details.
+---
 
-## Support
+## 📄 License            
 
-- **Issues**: GitHub Issues
-- **Documentation**: See `docs/` directory
-- **Security Issues**: Please report privately to security@revertit.com
+📜 **MIT License** - see [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
+---
 
-- TimeShift project for inspiration and integration
-- The Linux community for excellent monitoring tools
-- All contributors and users providing feedback
+## 🆘 Support
+
+| Type                  | Contact                                                      |
+| --------------------- | ------------------------------------------------------------ |
+| 🐛 **Issues**          | [GitHub Issues](https://github.com/ChrisNelsonOK/RevertIT/issues) |
+| 📚 **Documentation**   | See [docs/](docs/) directory                                 |
+| 🔒 **Security Issues** | Please report privately to security@revertit.com             |
+
+---
+
+## 🙏 Acknowledgments            
+
+- 📸 **TimeShift project** for inspiration and integration
+- 🐧 **The Linux community** for excellent monitoring tools
+- 👥 **All contributors** and users providing feedback
+
+---
+
+## ⭐ Star this project if you find it useful!
+
+[![GitHub stars](https://img.shields.io/github/stars/ChrisNelsonOK/RevertIT?style=social)](https://github.com/ChrisNelsonOK/RevertIT/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/ChrisNelsonOK/RevertIT?style=social)](https://github.com/ChrisNelsonOK/RevertIT/network/members)
+[![GitHub issues](https://img.shields.io/github/issues/ChrisNelsonOK/RevertIT)](https://github.com/ChrisNelsonOK/RevertIT/issues)
