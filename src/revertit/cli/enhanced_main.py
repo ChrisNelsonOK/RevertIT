@@ -16,8 +16,8 @@ from ..distro.detector import DistroDetector
 from ..snapshot.enhanced_manager import SnapshotManager
 
 
-class RevertITCLI:
-    """Command-line interface for RevertIT with enhanced Docker integration."""
+class EnhancedRevertITCLI:
+    """Enhanced command-line interface for RevertIT with Docker integration."""
 
     def __init__(self):
         """Initialize CLI."""
@@ -611,7 +611,7 @@ class RevertITCLI:
 def main():
     """Main entry point for enhanced CLI."""
     parser = argparse.ArgumentParser(
-        description="RevertIT - Enhanced timed confirmation system with Docker integration"
+        description="RevertIT Enhanced - Timed confirmation system with Docker integration"
     )
 
     parser.add_argument(
@@ -672,7 +672,7 @@ def main():
         parser.print_help()
         return 1
 
-    cli = RevertITCLI()
+    cli = EnhancedRevertITCLI()
     cli.config_path = args.config
     cli.setup_logging(args.verbose)
 

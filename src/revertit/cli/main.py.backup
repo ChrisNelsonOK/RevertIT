@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Enhanced RevertIT CLI - Command-line interface with Docker integration.
+RevertIT CLI - Command-line interface for managing the system.
 """
 
 import argparse
@@ -13,15 +13,15 @@ import yaml
 
 from ..daemon.main import RevertITDaemon
 from ..distro.detector import DistroDetector
-from ..snapshot.enhanced_manager import SnapshotManager
+from ..snapshot.manager import SnapshotManager
 
 
 class RevertITCLI:
-    """Command-line interface for RevertIT with enhanced Docker integration."""
+    """Command-line interface for RevertIT."""
 
     def __init__(self):
         """Initialize CLI."""
-        self.config_path = "/opt/revertit/config/revertit.yaml"
+        self.config_path = "/etc/revertit/config.yaml"
         self.logger = None
 
     def setup_logging(self, verbose: bool = False) -> None:
@@ -49,7 +49,7 @@ class RevertITCLI:
         """Show daemon and system status."""
         config = self.load_config()
 
-        print("RevertIT Enhanced Status")
+        print("RevertIT Status")
         print("=" * 40)
 
         # Check daemon status
@@ -62,6 +62,7 @@ class RevertITCLI:
                 # Check if process is running
                 try:
                     import os
+
                     os.kill(pid, 0)
                     print(f"✓ Daemon running (PID: {pid})")
                 except OSError:
@@ -87,27 +88,6 @@ class RevertITCLI:
             print(f"✓ Configuration: {self.config_path}")
         else:
             print(f"✗ Configuration file missing: {self.config_path}")
-
-        # Docker integration status
-        try:
-            distro_detector = DistroDetector(config.get("distro", {}))
-            distro_info = distro_detector.detect()
-            snapshot_manager = SnapshotManager(
-                config=config.get("snapshot", {}), distro_info=distro_info
-            )
-            
-            docker_info = snapshot_manager.get_docker_info()
-            if docker_info.get('docker_enabled', False):
-                print("✓ Docker integration enabled")
-                containers = docker_info.get('containers', [])
-                volumes = docker_info.get('volumes', [])
-                print(f"  Containers: {len(containers)}")
-                print(f"  Volumes: {len(volumes)}")
-            else:
-                print("✗ Docker integration disabled")
-                print(f"  Reason: {docker_info.get('reason', 'Unknown')}")
-        except Exception as e:
-            print(f"✗ Error checking Docker integration: {e}")
 
         # Log file
         log_file = config.get("global", {}).get("log_file", "/var/log/revertit.log")
@@ -162,6 +142,7 @@ class RevertITCLI:
         self.cmd_stop(args)
 
         import time
+
         time.sleep(2)
 
         print("Starting daemon...")
@@ -205,20 +186,15 @@ class RevertITCLI:
             return 0
 
         print("Available Snapshots:")
-        print("-" * 100)
-        print(f"{'ID':<30} {'Type':<12} {'Timestamp':<20} {'Docker':<8} {'Size':<10} {'Description'}")
-        print("-" * 100)
+        print("-" * 80)
+        print(f"{'ID':<30} {'Type':<10} {'Timestamp':<20} {'Description'}")
+        print("-" * 80)
 
         for snapshot in snapshots:
-            snapshot_type = snapshot.get('type', 'manual')
-            docker_enabled = "Yes" if snapshot.get('docker_enabled', False) else "No"
-            size_mb = snapshot.get('total_size', 0) / (1024 * 1024)
-            size_str = f"{size_mb:.1f}MB" if size_mb > 0 else "Unknown"
-            
             print(
-                f"{snapshot['id']:<30} {snapshot_type:<12} "
-                f"{snapshot.get('timestamp', 'unknown'):<20} {docker_enabled:<8} "
-                f"{size_str:<10} {snapshot.get('description', 'No description')}"
+                f"{snapshot['id']:<30} {snapshot['type']:<10} "
+                f"{snapshot.get('timestamp', 'unknown'):<20} "
+                f"{snapshot.get('description', 'No description')}"
             )
 
         return 0
@@ -229,10 +205,10 @@ class RevertITCLI:
         """Create a new snapshot."""
         try:
             if not description:
-                description = "Enhanced snapshot created via CLI"
+                description = "Manual snapshot created via CLI"
 
             snapshot_id = snapshot_manager.create_snapshot(description)
-            print(f"Created enhanced snapshot: {snapshot_id}")
+            print(f"Created snapshot: {snapshot_id}")
             return 0
         except Exception as e:
             print(f"Failed to create snapshot: {e}")
@@ -288,207 +264,6 @@ class RevertITCLI:
             print(f"Error restoring snapshot: {e}")
             return 1
 
-    def cmd_docker(self, args) -> int:
-        """Docker integration commands."""
-        config = self.load_config()
-        
-        try:
-            # Initialize components needed for Docker management
-            distro_detector = DistroDetector(config.get("distro", {}))
-            distro_info = distro_detector.detect()
-            
-            snapshot_manager = SnapshotManager(
-                config=config.get("snapshot", {}), distro_info=distro_info
-            )
-            
-            if args.docker_action == "info":
-                return self._docker_info(snapshot_manager)
-            elif args.docker_action == "volumes":
-                return self._docker_volumes(snapshot_manager)
-            elif args.docker_action == "databases":
-                return self._docker_databases(snapshot_manager)
-            elif args.docker_action == "test":
-                return self._docker_test(snapshot_manager)
-            else:
-                print(f"Unknown docker action: {args.docker_action}")
-                return 1
-                
-        except Exception as e:
-            print(f"Docker operation failed: {e}")
-            return 1
-    
-    def _docker_info(self, snapshot_manager) -> int:
-        """Show Docker environment information."""
-        try:
-            docker_info = snapshot_manager.get_docker_info()
-            
-            print("Docker Environment Information")
-            print("=" * 50)
-            
-            if not docker_info.get('docker_enabled', True):
-                print("❌ Docker integration not available")
-                print(f"   Reason: {docker_info.get('reason', 'Unknown')}")
-                return 0
-            
-            # Show containers
-            containers = docker_info.get('containers', [])
-            print(f"📦 Containers: {len(containers)}")
-            for container in containers[:5]:  # Show first 5
-                print(f"   • {container.get('Names', 'Unknown')} ({container.get('State', 'Unknown')})")
-            if len(containers) > 5:
-                print(f"   ... and {len(containers) - 5} more")
-            
-            # Show volumes  
-            volumes = docker_info.get('volumes', [])
-            print(f"💾 Volumes: {len(volumes)}")
-            for volume in volumes[:5]:  # Show first 5
-                print(f"   • {volume.get('Name', 'Unknown')}")
-            if len(volumes) > 5:
-                print(f"   ... and {len(volumes) - 5} more")
-            
-            # Show compose files
-            compose_files = docker_info.get('compose_files', [])
-            print(f"🐳 Compose Files: {len(compose_files)}")
-            for compose_file in compose_files:
-                print(f"   • {compose_file}")
-            
-            return 0
-            
-        except Exception as e:
-            print(f"Failed to get Docker info: {e}")
-            return 1
-    
-    def _docker_volumes(self, snapshot_manager) -> int:
-        """Show Docker volume statistics."""
-        try:
-            volume_stats = snapshot_manager.get_volume_stats()
-            
-            print("Docker Volume Statistics")
-            print("=" * 50)
-            
-            if not volume_stats:
-                print("No volume statistics available")
-                return 0
-            
-            total_size_bytes = 0
-            
-            print(f"{'Volume Name':<30} {'Size (MB)':<15} {'Driver':<10} {'Status'}")
-            print("-" * 70)
-            
-            for volume_name, stats in volume_stats.items():
-                size_mb = stats.get('size_mb', 0)
-                driver = stats.get('driver', 'unknown')
-                status = 'error' if 'error' in stats else 'ok'
-                
-                total_size_bytes += stats.get('size_bytes', 0)
-                
-                print(f"{volume_name:<30} {size_mb:<15.2f} {driver:<10} {status}")
-            
-            total_size_gb = total_size_bytes / (1024 * 1024 * 1024)
-            print(f"\nTotal Volume Size: {total_size_gb:.2f} GB")
-            
-            return 0
-            
-        except Exception as e:
-            print(f"Failed to get volume stats: {e}")
-            return 1
-    
-    def _docker_databases(self, snapshot_manager) -> int:
-        """Show database statistics."""
-        try:
-            db_stats = snapshot_manager.get_database_stats()
-            
-            print("Database Statistics")
-            print("=" * 50)
-            
-            if not db_stats:
-                print("No database statistics available")
-                return 0
-            
-            for db_name, stats in db_stats.items():
-                print(f"\n📊 Database: {db_name}")
-                print(f"   Type: {stats.get('type', 'unknown')}")
-                print(f"   Status: {stats.get('status', 'unknown')}")
-                
-                if 'error' in stats:
-                    print(f"   ❌ Error: {stats['error']}")
-                elif 'databases' in stats:
-                    for db, db_info in stats['databases'].items():
-                        size = db_info.get('size', 'unknown')
-                        table_count = db_info.get('table_count', 'unknown')
-                        print(f"   • {db}: {size} ({table_count} tables)")
-            
-            return 0
-            
-        except Exception as e:
-            print(f"Failed to get database stats: {e}")
-            return 1
-    
-    def _docker_test(self, snapshot_manager) -> int:
-        """Test Docker integration functionality."""
-        try:
-            test_results = snapshot_manager.test_docker_integration()
-            
-            print("Docker Integration Test")
-            print("=" * 50)
-            
-            # Show test results
-            if test_results['docker_available']:
-                print("✅ Docker is available")
-            else:
-                print("❌ Docker is not available")
-            
-            if test_results['docker_compose_available']:
-                print("✅ Docker Compose is available")
-            else:
-                print("❌ Docker Compose is not available")
-            
-            if test_results['volumes_accessible']:
-                volume_count = test_results.get('volume_count', 0)
-                print(f"✅ Volumes are accessible ({volume_count} found)")
-            else:
-                print("❌ Volumes are not accessible")
-            
-            if test_results['databases_accessible']:
-                db_count = test_results.get('database_count', 0)
-                print(f"✅ Databases are accessible ({db_count} found)")
-            else:
-                print("❌ Databases are not accessible")
-            
-            if test_results['config_valid']:
-                print("✅ Configuration is valid")
-                config_summary = test_results.get('config_summary', {})
-                print(f"   • Backup volumes: {config_summary.get('backup_volumes', False)}")
-                print(f"   • Backup databases: {config_summary.get('backup_databases', False)}")
-                print(f"   • Backup compose files: {config_summary.get('backup_compose_files', False)}")
-            else:
-                print("❌ Configuration is not valid")
-            
-            # Show errors
-            errors = test_results.get('errors', [])
-            if errors:
-                print(f"\n❌ Errors ({len(errors)}):")
-                for error in errors:
-                    print(f"   • {error}")
-            
-            # Show warnings
-            warnings = test_results.get('warnings', [])
-            if warnings:
-                print(f"\n⚠️  Warnings ({len(warnings)}):")
-                for warning in warnings:
-                    print(f"   • {warning}")
-            
-            if not errors:
-                print("\n🎉 All tests passed!")
-                return 0
-            else:
-                print(f"\n💥 {len(errors)} test(s) failed")
-                return 1
-                
-        except Exception as e:
-            print(f"Docker integration test failed: {e}")
-            return 1
-
     def cmd_timeouts(self, args) -> int:
         """Manage active timeouts."""
         self.load_config()
@@ -522,7 +297,7 @@ class RevertITCLI:
         """Test system compatibility and configuration."""
         config = self.load_config()
 
-        print("RevertIT Enhanced System Test")
+        print("RevertIT System Test")
         print("=" * 40)
 
         # Test distribution detection
@@ -557,28 +332,6 @@ class RevertITCLI:
         except Exception as e:
             print(f"✗ Snapshot functionality failed: {e}")
 
-        # Test Docker integration
-        try:
-            distro_detector = DistroDetector(config.get("distro", {}))
-            distro_info = distro_detector.detect()
-            snapshot_manager = SnapshotManager(
-                config=config.get("snapshot", {}), distro_info=distro_info
-            )
-            
-            test_results = snapshot_manager.test_docker_integration()
-            
-            if test_results['docker_available']:
-                print("✓ Docker integration available")
-                if test_results['volumes_accessible']:
-                    print(f"✓ Can access {test_results.get('volume_count', 0)} volumes")
-                if test_results['databases_accessible']:
-                    print(f"✓ Can access {test_results.get('database_count', 0)} databases")
-            else:
-                print("⚠ Docker integration not available")
-                
-        except Exception as e:
-            print(f"✗ Docker integration test failed: {e}")
-
         # Test configuration file monitoring paths
         monitor_config = config.get("monitoring", {})
         all_paths = []
@@ -609,13 +362,13 @@ class RevertITCLI:
 
 
 def main():
-    """Main entry point for enhanced CLI."""
+    """Main entry point for CLI."""
     parser = argparse.ArgumentParser(
-        description="RevertIT - Enhanced timed confirmation system with Docker integration"
+        description="RevertIT - Timed confirmation system for Linux configuration changes"
     )
 
     parser.add_argument(
-        "--config", default="/opt/revertit/config/revertit.yaml", help="Configuration file path"
+        "--config", default="/etc/revertit/config.yaml", help="Configuration file path"
     )
     parser.add_argument(
         "--verbose", "-v", action="store_true", help="Enable verbose output"
@@ -647,14 +400,6 @@ def main():
     )
     snapshot_parser.add_argument("--description", help="Description for new snapshot")
 
-    # Docker management commands
-    docker_parser = subparsers.add_parser("docker", help="Docker integration commands")
-    docker_parser.add_argument(
-        "docker_action",
-        choices=["info", "volumes", "databases", "test"],
-        help="Docker action to perform"
-    )
-
     # Timeout management commands
     subparsers.add_parser("timeouts", help="List active timeouts")
 
@@ -683,7 +428,6 @@ def main():
         "stop": cli.cmd_stop,
         "restart": cli.cmd_restart,
         "snapshots": cli.cmd_snapshots,
-        "docker": cli.cmd_docker,
         "timeouts": cli.cmd_timeouts,
         "confirm": cli.cmd_confirm,
         "test": cli.cmd_test,

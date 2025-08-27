@@ -1,0 +1,194 @@
+# Docker Integration Configuration for RevertIT
+# This configuration extends RevertIT to include Docker volumes and database backups
+
+docker:
+  # Enable Docker container snapshots
+  backup_volumes: true
+  backup_databases: true  
+  backup_compose_files: true
+  
+  # Container management during restore
+  stop_containers_on_restore: false
+  restart_containers_after_restore: true
+  
+  # Docker Compose files to backup
+  compose_files:
+    - /opt/docker-compose.yml
+    - /opt/docker-compose.yaml
+    - /opt/compose.yml
+    - /opt/compose.yaml
+  
+  # Configuration directories to backup
+  config_dirs:
+    - /opt/traefik-config
+    - /opt/grafana
+    - /opt/prometheus
+    - /opt/influxdb
+    - /opt/minio-config
+    - /opt/scripts
+    - /opt/ssl
+    - /opt/blackbox-exporter
+    - /opt/snmp-exporter
+
+# Volume backup settings
+volumes:
+  # Compress volume backups
+  compress_volumes: true
+  
+  # Enable parallel volume backups (experimental)
+  parallel_backups: false
+  
+  # Critical volumes to always backup (observability stack)
+  critical_volumes:
+    - grafana_data
+    - opt_grafana_data
+    - postgres_data
+    - opt_postgres_data
+    - prometheus_data
+    - opt_prometheus_data
+    - influxdb_data
+    - opt_influxdb_data
+    - minio_data
+    - opt_minio_data
+    - portainer_data
+    - opt_portainer_data
+    - vector_data
+    - opt_vector_data
+    - dockge_data
+    - opt_dockge_data
+  
+  # Volumes to exclude from backup (usually empty or temporary)
+  exclude_volumes:
+    - test_storage
+    - debug_storage
+    - temp_data
+    - cache_data
+  
+  # If specified, only backup these volumes (plus critical_volumes)
+  include_only: []
+
+# Database backup settings  
+databases:
+  # Database connection configurations
+  database_configs:
+    postgres:
+      container_name: postgres
+      type: postgresql
+      port: 5432
+      databases:
+        - grafana
+      username: grafana
+      password_env: POSTGRES_PASSWORD
+      password_value: "$w33t@55T3a!"
+      backup_command: pg_dump
+      restore_command: psql
+      
+    influxdb:
+      container_name: influxdb
+      type: influxdb
+      port: 8086
+      organization: rectitude
+      bucket: r369
+      token_env: INFLUXDB_TOKEN
+      backup_command: influx backup
+      restore_command: influx restore
+      
+    minio:
+      container_name: minio
+      type: minio
+      port: 9000
+      access_key: admin
+      secret_key: "$w33t@55T3a!"
+      backup_command: mc mirror
+      restore_command: mc mirror
+
+# Integration with existing RevertIT configuration
+snapshot:
+  # Enable Docker integration in snapshots
+  enable_docker_integration: true
+  
+  # Docker snapshot retention (in addition to system snapshots)
+  docker_snapshot_retention: 5
+  
+  # Compress Docker snapshots
+  compress_docker_snapshots: true
+  
+  # Location for Docker-specific backup data
+  docker_backup_location: /var/lib/revertit/docker-snapshots
+
+# Monitoring for Docker-specific changes
+monitoring:
+  # Docker-related paths to monitor for changes
+  docker_paths:
+    - /opt/docker-compose.yml
+    - /opt/docker-compose.yaml
+    - /opt/traefik-config/*
+    - /opt/grafana/*
+    - /opt/scripts/*
+    - /var/lib/docker/volumes
+  
+  # Monitor container state changes
+  monitor_containers: true
+  
+  # Monitor volume changes
+  monitor_volumes: true
+
+# Notification settings for Docker events
+notifications:
+  # Notify on Docker backup/restore events
+  docker_notifications: true
+  
+  # Notify on volume backup failures
+  volume_backup_failures: true
+  
+  # Notify on database backup failures
+  database_backup_failures: true
+
+# Advanced Docker settings
+advanced:
+  # Timeout for Docker operations (seconds)
+  docker_timeout: 300
+  
+  # Maximum parallel volume backups
+  max_parallel_backups: 3
+  
+  # Use Docker BuildKit features if available
+  use_buildkit: false
+  
+  # Docker registry settings for image backups (if needed)
+  registry:
+    enabled: false
+    url: ""
+    username: ""
+    password: ""
+
+# Observability Stack Specific Settings
+observability:
+  # Grafana-specific backup settings
+  grafana:
+    backup_dashboards: true
+    backup_datasources: true
+    backup_users: true
+    backup_plugins: true
+    export_format: json
+    
+  # Prometheus-specific backup settings
+  prometheus:
+    backup_config: true
+    backup_rules: true
+    backup_data: false  # Usually too large, rely on volume backup
+    
+  # InfluxDB-specific backup settings
+  influxdb:
+    backup_all_buckets: false
+    specific_buckets:
+      - r369
+    backup_config: true
+    
+  # MinIO-specific backup settings
+  minio:
+    backup_all_buckets: true
+    exclude_buckets:
+      - temp
+      - cache
+    backup_config: true
